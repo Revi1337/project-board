@@ -24,9 +24,9 @@ import java.util.Set;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Article {
+public class Article extends AuditingFields{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,10 +45,10 @@ public class Article {
 
 
     // not null
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 최초 insert 할 때 생성될 때마다 생성된 시간과 생성한 사람을 실시간으로 추가시켜주겠다는 의미.
-    @CreatedBy @Column(nullable = false, length = 100) private String createdBy;
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // update 할때마다 수정한 시간과 사람을 실시간으로 수정해주겠다는 의미
-    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy;
+//    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 최초 insert 할 때 생성될 때마다 생성된 시간과 생성한 사람을 실시간으로 추가시켜주겠다는 의미.
+//    @CreatedBy @Column(nullable = false, length = 100) private String createdBy;
+//    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // update 할때마다 수정한 시간과 사람을 실시간으로 수정해주겠다는 의미
+//    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy;
 
 
     // 모든 JPA entity 들은 Hibernate 구현체를 사용하는 경우일때 기본 생성자를 갖고 있어야 한다.
