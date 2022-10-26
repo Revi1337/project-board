@@ -20,9 +20,9 @@ import java.util.Objects;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class ArticleComment {
+public class ArticleComment extends AuditingFields{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +30,10 @@ public class ArticleComment {
     @Setter             @ManyToOne(optional = false) private Article article; // N 대 1, optional false 은 이것은 필수값이다라는 의미.
     @Setter             @Column(nullable = false, length = 500) private String content;
 
-    @CreatedDate        @Column(nullable = false) private LocalDateTime createdAt; // 최초 insert 할 때 생성될 때마다 생성된 시간과 생성한 사람을 실시간으로 추가시켜주겠다는 의미.
-    @CreatedBy          @Column(nullable = false, length = 100) private String createdBy;
-    @LastModifiedDate   @Column(nullable = false) private LocalDateTime modifiedAt; // update 할때마다 수정한 시간과 사람을 실시간으로 수정해주겠다는 의미
-    @LastModifiedBy     @Column(nullable = false, length = 100) private String modifiedBy;
+//    @CreatedDate        @Column(nullable = false) private LocalDateTime createdAt; // 최초 insert 할 때 생성될 때마다 생성된 시간과 생성한 사람을 실시간으로 추가시켜주겠다는 의미.
+//    @CreatedBy          @Column(nullable = false, length = 100) private String createdBy;
+//    @LastModifiedDate   @Column(nullable = false) private LocalDateTime modifiedAt; // update 할때마다 수정한 시간과 사람을 실시간으로 수정해주겠다는 의미
+//    @LastModifiedBy     @Column(nullable = false, length = 100) private String modifiedBy;
 
     protected ArticleComment() {
     }
