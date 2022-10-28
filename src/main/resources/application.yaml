@@ -19,7 +19,6 @@ spring:
   jpa:
     defer-datasource-initialization: true
     hibernate.ddl-auto: create
-#    open-in-view: false
     show-sql: true
     properties:
       hibernate.format_sql: true
@@ -31,6 +30,10 @@ spring:
   data.rest:
     base-path: /api
     detection-strategy: annotated
+
+  thymeleaf3:
+    decoupled-logic: true
+
 
 server:
   port: 9005
