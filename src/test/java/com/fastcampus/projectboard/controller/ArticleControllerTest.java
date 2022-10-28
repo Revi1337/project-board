@@ -1,10 +1,12 @@
 package com.fastcampus.projectboard.controller;
 
+import com.fastcampus.projectboard.config.SecurityConfig;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -13,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // 본격적인 웹 mvc 테스트
 @DisplayName("View 컨트롤러 - 게시글")
+@Import(SecurityConfig.class)   // 사전에 셋팅한 시큐리티 설정을 통해서 인증에 막히지 않고 테스트를 할 수 있음.
 @WebMvcTest(ArticleController.class) // 테스트 대상이 되는 controller 만 Bean 으로 읽어들이는 것이 가능함.
 class ArticleControllerTest {
 
