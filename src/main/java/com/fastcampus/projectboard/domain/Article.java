@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "title"),
         @Index(columnList = "hashtag"),
@@ -31,6 +31,8 @@ public class Article extends AuditingFields{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter @ManyToOne(optional = false) private UserAccount userAccount;   // 유저 정보 (ID)
+
     // notnull
     @Setter @Column(nullable = false) private String title; // Setter 를 class 레벨에 걸지 않고 특정 필드에 거는 이유는 사용자가 특정 필드에 접근하여 세팅하지 못하게끔 막고싶어서 그렇다.
     @Setter @Column(nullable = false, length = 10000) private String content;
@@ -39,7 +41,7 @@ public class Article extends AuditingFields{
     @Setter private String hashtag;
 
     @ToString.Exclude // 퍼포먼스 이슈로 인한 toString 제외.
-    @OrderBy(value = "id")
+    @OrderBy(value = "createdAt DESC")
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)    // 이것은 article 테이블로 부터 온것이라다는 것을 명시
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
@@ -58,7 +60,8 @@ public class Article extends AuditingFields{
     // id, created.. modified 는 자동으로 생성해줄 것이기 때문에 이를 제외하고 나머지는 직접 설정해주겠다는 의미임.
     // 또한, 외부에서 직접 생성하지 못하게 private 로 막아둘 것이고, factory 메서드를 통해 객체를 만들 수 있게 만들 것임.
     // factory 메서드는 domain Article 을 생성하고자 할 때 어떤 값을 필요로 한다는 가이드를 제공하는 것을 말함.
-    private Article(String title, String content, String hashtag) {
+    private Article(UserAccount userAccount, String title, String content, String hashtag) {
+        this.userAccount = userAccount;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
@@ -66,8 +69,8 @@ public class Article extends AuditingFields{
 
     // 이부분이 factory 메서드를 말함.
     // 의도를 전달하는 것임. 도메인 Article 을 생성하고자할때 필요한 요구사항을 안내해주는 역할을 함.
-    public static Article of(String title, String content, String hashtag) {
-        return new Article(title, content, hashtag);
+    public static Article of(UserAccount userAccount, String title, String content, String hashtag) {
+        return new Article(userAccount, title, content, hashtag);
     }
 
 
