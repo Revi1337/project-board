@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "content"),
         @Index(columnList = "createdAt"),
@@ -28,6 +28,8 @@ public class ArticleComment extends AuditingFields{
     private Long id;
 
     @Setter             @ManyToOne(optional = false) private Article article; // N 대 1, optional false 은 이것은 필수값이다라는 의미.
+    @Setter             @ManyToOne(optional = false) private UserAccount userAccount;
+
     @Setter             @Column(nullable = false, length = 500) private String content;
 
 //    @CreatedDate        @Column(nullable = false) private LocalDateTime createdAt; // 최초 insert 할 때 생성될 때마다 생성된 시간과 생성한 사람을 실시간으로 추가시켜주겠다는 의미.
@@ -38,13 +40,14 @@ public class ArticleComment extends AuditingFields{
     protected ArticleComment() {
     }
 
-    private ArticleComment(Article article, String content) {
+    private ArticleComment(Article article, UserAccount userAccount,String content) {
         this.article = article;
+        this.userAccount = userAccount;
         this.content = content;
     }
 
-    public static ArticleComment of(Article article, String content) {
-        return new ArticleComment(article, content);
+    public static ArticleComment of(Article article, UserAccount userAccount, String content) {
+        return new ArticleComment(article, userAccount, content);
     }
 
     @Override
