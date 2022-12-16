@@ -45,7 +45,7 @@ public class ArticleController {
 
         map.addAttribute("articles", articles); // Model attr 추가
         map.addAttribute("paginationBarNumbers", barNumbers);
-
+        map.addAttribute("searchTypes", SearchType.values());
 
         return "articles/index";
     }

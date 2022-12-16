@@ -1,6 +1,7 @@
 package com.fastcampus.projectboard.controller;
 
 import com.fastcampus.projectboard.config.SecurityConfig;
+import com.fastcampus.projectboard.domain.type.SearchType;
 import com.fastcampus.projectboard.dto.ArticleWithCommentsDto;
 import com.fastcampus.projectboard.dto.UserAccountDto;
 import com.fastcampus.projectboard.service.ArticleService;
@@ -63,9 +64,31 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
+    @DisplayName("[view] [GET] 게시글 리스트 (게시판) 페이지 - 검색어와 함꼐 호출")
+    @Test
+    public void givenSearchKeyword_whenSearchingArticlesView_thenReturnsArticlesView() throws Exception {
+        // Given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchValue), any(Pageable.class))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0,1,2,3,4));
+
+        // When & Then
+        mvc.perform(get("/articles")
+                        .queryParam("searchType", searchType.name())
+                        .queryParam("searchValue", searchValue)) // 해당 경로로 요청을 하면
+                .andExpect(status().isOk()) // 200 을 검사하고
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML)) // Content-type 이 text/html 인지 부분검사하고. ( contentType(MediaType.TEXT_HTML)) 와의 차이점은 호환되는 타입까지 전부 다 맞다고 침. (text/html 과 text/html;charset=UTF-8 등))
+                .andExpect(view().name("articles/index")) // view 의 이름은 template 폴더 하위 articles 하위 index (html) 이어야 하고 ( view 의 이름에 대한 테스트도 작성 가능)
+                .andExpect(model().attributeExists("articles")) // Data 로 articles 이란 것을 넘겨주어야 한다.
+                .andExpect(model().attributeExists("searchTypes"));
+        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
     @DisplayName("[view] [GET] 게시글 리스트 (게시판) 페이지 - 페이징, 정렬 기능")
     @Test
-    void givenPagingAndSortingParams_whenSearchingArticlesPage_thenReturnsArticlesPage() throws Exception {
+    void givenPagingAndSortingParams_whenSearchingArticlesPage_thenReturnsArticlesView() throws Exception {
         // Given
         String sortName = "title";
         String direction = "desc";
