@@ -1,6 +1,7 @@
 package com.fastcampus.projectboard.controller;
 
 import com.fastcampus.projectboard.config.SecurityConfig;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class AuthControllerTest {
         this.mvc = mvc;
     }
 
+    @Disabled
     @DisplayName("[view] [GET] 로그인 페이지 - 정상 호출")
     @Test
     public void givenNothing_whenTryingToLogIn_thenReturnsLogInView() throws Exception {

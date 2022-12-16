@@ -45,7 +45,7 @@ public class ArticleController {
 
         map.addAttribute("articles", articles); // Model attr 추가
         map.addAttribute("paginationBarNumbers", barNumbers);
-
+        map.addAttribute("searchTypes", SearchType.values());
 
         return "articles/index";
     }
@@ -58,4 +58,24 @@ public class ArticleController {
 
         return "articles/detail";
     }
+
+    @GetMapping("/search-hashtag")
+    public String searchHashTag(
+            @RequestParam(required = false) SearchType searchType,
+            @RequestParam(required = false) String searchValue,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, // 게시판에서 한 페이지의 화면에 게시글 10 개를 보옂루 것이라는 뜻.
+            ModelMap map
+    ) {
+        Page<ArticleResponse> articles = articleService.searchArticlesViaHashtag(searchValue, pageable).map(ArticleResponse::from);
+        List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
+        List<String> hashtags = articleService.getHashtags();
+
+        map.addAttribute("articles", articles);
+        map.addAttribute("hashtags", hashtags);
+        map.addAttribute("paginationBarNumbers", barNumbers);
+        map.addAttribute("searchType", SearchType.HASHTAG);
+
+        return "articles/search-hashtag";
+    }
+
 }

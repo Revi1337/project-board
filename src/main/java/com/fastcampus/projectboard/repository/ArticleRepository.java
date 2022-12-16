@@ -2,6 +2,7 @@ package com.fastcampus.projectboard.repository;
 
 import com.fastcampus.projectboard.domain.Article;
 import com.fastcampus.projectboard.domain.QArticle;
+import com.fastcampus.projectboard.repository.querydsl.ArticleRepositoryCustom;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource
 public interface ArticleRepository extends
         JpaRepository<Article, Long>,
+        ArticleRepositoryCustom,
         QuerydslPredicateExecutor<Article>, // 기본적으로 Article 안에있는 모든 Field 에 대한 기본 검색 기능을 추가해줌. (사실 이거 하나만 넣어도 검색 기능은 끝남)
         QuerydslBinderCustomizer<QArticle>  // QueryBindCustomizer 에 들어가는 제네릭은 QClass 넣어주게 되어있음. (이것의 기능은 입맛에 맞게 검색기능을 추가할 수 있음.)
 {
