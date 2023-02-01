@@ -16,14 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
-
-// ArticleControllerTest 참조
-// /articles   (o)
-// /articles/{article-id} (0)
-// /articles/search (0)
-// /articles/search-hashtag (0)
 
 @RequiredArgsConstructor
 @RequestMapping("/articles")
@@ -61,7 +54,6 @@ public class ArticleController {
 
     @GetMapping("/search-hashtag")
     public String searchHashTag(
-            @RequestParam(required = false) SearchType searchType,
             @RequestParam(required = false) String searchValue,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, // 게시판에서 한 페이지의 화면에 게시글 10 개를 보옂루 것이라는 뜻.
             ModelMap map

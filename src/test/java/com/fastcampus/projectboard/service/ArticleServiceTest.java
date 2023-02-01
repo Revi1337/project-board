@@ -80,11 +80,12 @@ class ArticleServiceTest {
         // Then
         assertThat(articles).isEqualTo(Page.empty(pageable));
         then(articleRepository).shouldHaveNoInteractions();
+        then(articleRepository).shouldHaveNoInteractions();
     }
 
     @DisplayName("게시글을 해시태그 검색하면, 게시물 페이지를 반환한다.")
     @Test
-    void givenHastag_whenSearchingArticlesViaHashing_thenReturnsArticlesPage() {
+    void givenHashTag_whenSearchingArticlesViaHashing_thenReturnsArticlesPage() {
         // Given
         String hashtag = "#java";
         Pageable pageable = Pageable.ofSize(20);

@@ -27,11 +27,11 @@ public interface ArticleRepository extends
     Page<Article> findByHashtag(String hashtag, Pageable pageable);
 
 
-    @Override // QueryBindCustomizer 의 customize 메서드를 오버라이딩해야 해당 메서드안에 구현되어있는 내용을 토대로 세부적인 규칙이 재구성됨.
-    default void customize(QuerydslBindings bindings, QArticle root) { // 원래 인터페이스에서는 구현을 넣을 수 없지만 java 8 이후로 가능해짐.
-        bindings.excludeUnlistedProperties(true); // 현재 QuerydslPredicateExecutor 기능에 의해서 Article 에 있는 모든 Field 들에 대한 검색이 열려있는데, 이를 선택적인 Field 로 검색을 가능하게 해줌.
+    @Override                                                                       // QueryBindCustomizer 의 customize 메서드를 오버라이딩해야 해당 메서드안에 구현되어있는 내용을 토대로 세부적인 규칙이 재구성됨.
+    default void customize(QuerydslBindings bindings, QArticle root) {              // 원래 인터페이스에서는 구현을 넣을 수 없지만 java 8 이후로 가능해짐.
+        bindings.excludeUnlistedProperties(true);                                   // 현재 QuerydslPredicateExecutor 기능에 의해서 Article 에 있는 모든 Field 들에 대한 검색이 열려있는데, 이를 선택적인 Field 로 검색을 가능하게 해줌.
         bindings.including(root.title, root.content, root.hashtag, root.createdAt, root.createdBy); // 요놈으로 원하는 필드들을 선택해 줄 수 있음.
-        bindings.bind(root.title).first(StringExpression::containsIgnoreCase); // 검색파라미터는 한개만 받는데, path 가 value 를 비교 (대소문자 구분 X) 위에 것과 쿼리생성의 차이임. like '%${v}%' (부분검색 허용)
+        bindings.bind(root.title).first(StringExpression::containsIgnoreCase);      // 검색파라미터는 한개만 받는데, path 가 value 를 비교 (대소문자 구분 X) 위에 것과 쿼리생성의 차이임. like '%${v}%' (부분검색 허용)
         // bindings.bind(root.title).first((path, value) -> path.likeIgnoreCase(value)); // 검색파라미터는 한개만 받는데, path 가 value 를 비교 (대소문자 구분 X) like '${v}'
         bindings.bind(root.content).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.hashtag).first(StringExpression::containsIgnoreCase);
