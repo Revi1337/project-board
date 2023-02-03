@@ -26,6 +26,8 @@ public interface ArticleRepository extends
     Page<Article> findByUserAccount_NicknameContaining(String nickname, Pageable pageable);
     Page<Article> findByHashtag(String hashtag, Pageable pageable);
 
+    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
+
 
     @Override // QueryBindCustomizer 의 customize 메서드를 오버라이딩해야 해당 메서드안에 구현되어있는 내용을 토대로 세부적인 규칙이 재구성됨.
     default void customize(QuerydslBindings bindings, QArticle root) { // 원래 인터페이스에서는 구현을 넣을 수 없지만 java 8 이후로 가능해짐.

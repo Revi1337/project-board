@@ -1,23 +1,62 @@
 package com.fastcampus.projectboard.config;
 
+import com.fastcampus.projectboard.dto.UserAccountDto;
+import com.fastcampus.projectboard.dto.security.BoardPrincipal;
+import com.fastcampus.projectboard.repository.UserAccountRepository;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-// 스프링 시큐리티를 사용할때는 이 파일과 같이 Configuration 을 하지 않으면 서버가 동작했을떄, 인증을 하지 않으면 아무것도 할 수 없느 상태가 됨.
-// 하지만 Configuration 을 해주면 login 페이지를 별도로 뺴줄 수 있음.
 
-// security 를 설정하는 "extends WebSecurityConfigurerAdapter" 는 나중에 사라질 예정이므로, Bean 컴포넌트로 관리하는 방법으로 쓰는 것이 좋음.
-// WebSecurityConfigurerAdapter 를 사용할떄는 @EnableWebSecurity 사용해야하지만, Bean 컴포넌트로 관리할때는 써주지 않아도 됨.
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserAccountRepository userAccountRepository) {
+        return username -> userAccountRepository
+                .findById(username)
+                .map(UserAccountDto::from)
+                .map(BoardPrincipal::from)
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다." + username));
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // 모든 Request 에 대해 인증을 다 열겠다.
-                .formLogin().and()  // /login 폼 페이지를 만들게끔 유도
-                .build();   // 마지막으로 빌드.
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .mvcMatchers(HttpMethod.GET, "/", "/articles", "/articles/search-hashtag").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin().and()
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/"))
+                .build();
     }
+
 }
+
+
+// TODO WARN 12584 --- [  restartedMain] o.s.s.c.a.web.builders.WebSecurity - This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead
+// TODO 아래 리소스들은 스프링시큐리티의 보안필터들의 영역에 빠지게되어, CSRF SSTI, SSRF, XSS 등 보안공격에 취약해짐. 따라서 HttpSecurity 설정에 통쨰로 떄리라고 추천함.
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web
+//                .ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+//    }

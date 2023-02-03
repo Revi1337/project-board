@@ -18,6 +18,8 @@ public interface ArticleCommentRepository extends
 {
     List<ArticleComment> findByArticle_Id(Long articleId);
 
+    void deleteByIdAndUserAccount_UserId(Long articleCommentId, String userId);
+
     @Override
     default void customize(QuerydslBindings bindings, QArticleComment root){
         bindings.excludeUnlistedProperties(true); // 현재 QuerydslPredicateExecutor 기능에 의해서 Article 에 있는 모든 Field 들에 대한 검색이 열려있는데, 이를 선택적인 Field 로 검색을 가능하게 해줌.
@@ -26,5 +28,4 @@ public interface ArticleCommentRepository extends
         bindings.bind(root.createdAt).first((path, value) -> path.eq(value));
         bindings.bind(root.createdBy).first((path, value) -> path.containsIgnoreCase(value));
     }
-
 }
