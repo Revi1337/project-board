@@ -1,24 +1,27 @@
 package com.fastcampus.projectboard.repository;
 
-import com.fastcampus.projectboard.config.JpaConfig;
 import com.fastcampus.projectboard.domain.Article;
 import com.fastcampus.projectboard.domain.UserAccount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("JPA 연결 테스트")
-@Import(JpaConfig.class)       // 이놈은 JpaConfig 의 존재를 모르기 떄문에 명시해주어야 함. (명시하지 않으면 Jpaconfig 에서 넣어준 Auditing 이 활성화 되지 않음.)
-@DataJpaTest                    // 슬라이스 테스트
+@Import(JpaRepositoryTest.TestJpaConfig.class)
+@DataJpaTest
 class JpaRepositoryTest {
 
-    // junit5 이상과 spring 2.5 이상부터는 test 코드에서도 생성자 주입 패턴을 사용 가능.
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
     private final UserAccountRepository userAccountRepository;
@@ -89,4 +92,16 @@ class JpaRepositoryTest {
         assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
         assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
     }
+
+
+    // TODO Configuration 빈으로 등록하되, 테스트할때만 등록하라는 어노테이션
+    @EnableJpaAuditing
+    @TestConfiguration
+    public static class TestJpaConfig {
+        @Bean
+        public AuditorAware<String> auditorAware() {
+            return () -> Optional.of("uno");
+        }
+    }
+
 }
